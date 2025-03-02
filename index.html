@@ -6,22 +6,22 @@
   <title>Ramadan Planner Dashboard</title>
   <style>
     body {
-      font-family: 'Lora', serif; /* Elegant serif font */
+      font-family: 'Lora', serif;
       padding: 30px;
-      background: linear-gradient(135deg, #f5f7fa 0%, #e0f2e9 100%); /* Soft white to pale green */
-      color: #2f4f4f; /* Slate teal */
+      background: linear-gradient(135deg, #f5f7fa 0%, #e0f2e9 100%);
+      color: #2f4f4f;
       margin: 0;
     }
     h1 {
-      color: #d4a017; /* Warm gold */
+      color: #d4a017;
       text-align: center;
       font-size: 36px;
-      text-shadow: 0 2px 6px rgba(212, 160, 23, 0.4); /* Gentle gold glow */
+      text-shadow: 0 2px 6px rgba(212, 160, 23, 0.4);
       margin-bottom: 20px;
       position: relative;
     }
     h1::before {
-      content: "✨"; /* Sparkle emoji for festivity */
+      content: "✨";
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
@@ -34,14 +34,14 @@
       margin-bottom: 30px;
       font-size: 18px;
       color: #fff;
-      background: linear-gradient(90deg, #2e7d32 0%, #4caf50 100%); /* Green gradient */
+      background: linear-gradient(90deg, #2e7d32 0%, #4caf50 100%);
       padding: 15px 25px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
       max-width: 500px;
       margin-left: auto;
       margin-right: auto;
-      font-family: 'Roboto', sans-serif; /* Clean font for readability */
+      font-family: 'Roboto', sans-serif;
     }
     .verse-box {
       background: #fff;
@@ -49,13 +49,13 @@
       margin-bottom: 40px;
       border-radius: 20px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-      border: 2px solid #e6f0ea; /* Subtle green border */
+      border: 2px solid #e6f0ea;
       position: relative;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       overflow: hidden;
     }
     .verse-box::before {
-      content: "🕋"; /* Kaaba emoji for spiritual touch */
+      content: "🕋";
       position: absolute;
       top: 10px;
       right: 15px;
@@ -68,10 +68,10 @@
       box-shadow: 0 10px 25px rgba(46, 125, 50, 0.15);
     }
     .verse-box h2 {
-      color: #2e7d32; /* Green */
+      color: #2e7d32;
       font-size: 24px;
       margin-top: 0;
-      border-bottom: 2px dashed #d4a017; /* Gold dashed line */
+      border-bottom: 2px dashed #d4a017;
       padding-bottom: 10px;
     }
     .leaderboard-container {
@@ -83,13 +83,13 @@
     .leaderboard {
       width: 100%;
       border-collapse: collapse;
-      background: linear-gradient(180deg, #fff 0%, #fafafa 100%); /* Subtle gradient */
+      background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     }
     .leaderboard th {
-      background: linear-gradient(90deg, #d4a017 0%, #b8860b 100%); /* Gold gradient */
+      background: linear-gradient(90deg, #d4a017 0%, #b8860b 100%);
       color: #fff;
       padding: 15px 20px;
       font-size: 20px;
@@ -99,26 +99,25 @@
     }
     .leaderboard td {
       padding: 15px 20px;
-      color: #2f4f4f; /* Slate teal */
+      color: #2f4f4f;
       border-bottom: 1px solid #e6f0ea;
       transition: background-color 0.3s ease;
       font-family: 'Roboto', sans-serif;
     }
     .leaderboard tr {
       background: #fff;
-      position: relative;
     }
     .leaderboard tr:hover {
-      background: #f0f7f2; /* Light green hover */
+      background: #f0f7f2;
       cursor: pointer;
     }
     .leaderboard tr:nth-child(1) td {
-      background: rgba(212, 160, 23, 0.2); /* Gold highlight */
+      background: rgba(212, 160, 23, 0.2);
       font-weight: bold;
       color: #d4a017;
     }
     .leaderboard td:first-child::before {
-      content: "🌙"; /* Crescent moon */
+      content: "🌙";
       margin-right: 10px;
       color: #2e7d32;
       transition: transform 0.3s ease;
@@ -130,7 +129,7 @@
       display: inline-block;
       margin: 20px 15px;
       padding: 12px 25px;
-      background: linear-gradient(90deg, #2e7d32 0%, #4caf50 100%); /* Green gradient */
+      background: linear-gradient(90deg, #2e7d32 0%, #4caf50 100%);
       color: #fff;
       border: none;
       border-radius: 30px;
@@ -145,7 +144,7 @@
       box-shadow: 0 6px 18px rgba(46, 125, 50, 0.5);
     }
     .alert {
-      color: #c62828; /* Soft red */
+      color: #c62828;
       font-weight: bold;
       text-align: center;
       margin-top: 20px;
@@ -236,8 +235,8 @@
         timeZone: 'UTC'
       });
 
-      // Hijri date aligned to Ramadan start (March 1, 2025 = 1 Ramadan 1446 AH in Bangladesh)
-      const ramadanStart = new Date('2025-03-01T00:00:00Z');
+      // Hijri date aligned to Ramadan start (March 2, 2025 = 1 Ramadan 1446 AH in Bangladesh)
+      const ramadanStart = new Date('2025-03-02T00:00:00Z');
       const ramadanStartBangladesh = new Date(ramadanStart.getTime() + (6 * 60 * 60 * 1000));
       const timeDiff = bangladeshTime - ramadanStartBangladesh;
       const daysSinceRamadanStart = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
@@ -267,7 +266,7 @@
 
     // Fetch leaderboard from Apps Script proxy
     async function refreshLeaderboard() {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbxPUMQJ5IvDaJd8XbSigCrEHzMqG0k9vFotb0o-SZUgrAKGUt3-CDZxG3p4xwiC-rnQ/exec'); // Replace with your Apps Script URL
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxhj6K6EiFaJaF-5YAuJzBvAcSHFL9R8pMqsk-kCL89ml38vnJgO3GvTaBEsxs_qSmu/exec'); // Replace with your Apps Script URL
       const data = await response.json();
       const table = document.getElementById('leaderboard');
       while (table.rows.length > 1) table.deleteRow(1);
