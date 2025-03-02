@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ramadan Planner Dashboard</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      padding: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #e6f0ea 100%);
+      color: #333;
+    }
+    h1 {
+      color: #d4af37;
+      text-align: center;
+      text-shadow: 0 2px 4px rgba(212, 175, 55, 0.3);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    .date-time {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #ffffff;
+      background: #2e7d32;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+    }
+    .verse-box {
+      background: #ffffff;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-left: 5px solid #2e7d32;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .verse-box:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
+    }
+    .leaderboard-container {
+      width: 70%;
+      margin: 0 auto;
+    }
+    .leaderboard {
+      width: 100%;
+      border-collapse: collapse;
+      background: #f9f9f9;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    .leaderboard th {
+      background: linear-gradient(90deg, #d4af37 0%, #b8860b 100%);
+      color: #ffffff;
+      padding: 15px;
+      font-size: 18px;
+      text-align: left;
+      border-bottom: 2px solid #2e7d32;
+    }
+    .leaderboard td {
+      padding: 12px;
+      color: #2e7d32;
+      border-bottom: 1px solid #e0e0e0;
+      transition: background-color 0.3s ease;
+    }
+    .leaderboard tr {
+      background: #ffffff;
+    }
+    .leaderboard tr:hover {
+      background: #e8f5e9;
+      cursor: pointer;
+    }
+    .leaderboard tr:nth-child(1) td {
+      background: rgba(212, 175, 55, 0.2);
+      font-weight: bold;
+    }
+    .leaderboard td:first-child::before {
+      content: "🕌";
+      margin-right: 10px;
+      color: #2e7d32;
+      transition: transform 0.3s ease;
+    }
+    .leaderboard tr:hover td:first-child::before {
+      transform: scale(1.2);
+    }
+    .refresh-btn, .begin-btn {
+      display: inline-block;
+      margin: 15px 10px;
+      padding: 10px 20px;
+      background: #2e7d32;
+      color: #ffffff;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .refresh-btn:hover, .begin-btn:hover {
+      background: #1b5e20;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.5);
+    }
+    .alert {
+      color: #d32f2f;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+      animation: fadeIn 1s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes glow {
+      from { text-shadow: 0 2px 4px rgba(212, 175, 55, 0.2); }
+      to { text-shadow: 0 2px 6px rgba(212, 175, 55, 0.4); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Ramadan Planner Dashboard</h1>
+  
+  <div class="date-time" id="dateTime">
+    <p><strong>Today:</strong> <span id="gregorian"></span></p>
+    <p><strong>Hijri Date:</strong> <span id="hijri"></span></p>
+  </div>
+  
+  <div class="verse-box" id="verseBox">
+    <h2>Daily Inspiration from the Quran</h2>
+    <p><strong>Verse:</strong> <span id="verse"></span></p>
+    <p><strong>Meaning:</strong> <span id="meaning"></span></p>
+  </div>
+  
+  <div class="leaderboard-container">
+    <h2>Salah Leaderboard</h2>
+    <table class="leaderboard" id="leaderboard">
+      <tr><th>Twitter Handle</th><th>Salah Score</th></tr>
+    </table>
+    <button class="refresh-btn" onclick="refreshLeaderboard()">Refresh Rankings</button>
+    <button class="begin-btn" onclick="beginPlanning()">Begin Planning</button>
+  </div>
+  
+  <div id="alert" class="alert" style="display: none;"></div>
+
+  <script>
+    // Quran verses (static array from Code.gs)
+    const verses = [
+      { verse: "Indeed, with hardship comes ease (94:6)", meaning: "Allah promises relief after every difficulty." },
+      { verse: "So remember Me; I will remember you (2:152)", meaning: "Remembrance of Allah brings His mercy and closeness." },
+      { verse: "And whoever fears Allah - He will make for him a way out (65:2)", meaning: "Taqwa opens doors to solutions." },
+      { verse: "Allah does not burden a soul beyond that it can bear (2:286)", meaning: "You are stronger than you think with Allah’s decree." },
+      { verse: "The life of this world is but a fleeting enjoyment (3:185)", meaning: "Focus on the eternal, not the temporary." },
+      { verse: "Call upon Me; I will respond to you (40:60)", meaning: "Allah is always near, ready to answer your du’a." },
+      { verse: "And We have certainly made the Quran easy for remembrance (54:17)", meaning: "The Quran is accessible to all who seek it." },
+      { verse: "And He found you lost and guided you (93:7)", meaning: "Allah’s guidance is a gift to the seeking heart." },
+      { verse: "Indeed, the mercy of Allah is near to the doers of good (7:56)", meaning: "Good deeds draw you closer to Allah’s rahmah." },
+      { verse: "So be patient. Indeed, the promise of Allah is truth (30:60)", meaning: "Trust in Allah’s timing and promises." },
+      { verse: "And whoever puts his trust in Allah, He will suffice him (65:3)", meaning: "Reliance on Allah is enough for all needs." },
+      { verse: "Indeed, in the remembrance of Allah do hearts find rest (13:28)", meaning: "Peace comes through dhikr." },
+      { verse: "And your Lord is the Forgiving, Full of Mercy (18:58)", meaning: "Allah’s forgiveness is vast and ever-present." },
+      { verse: "Say, ‘My prayer, my sacrifice, my living, and my dying are for Allah’ (6:162)", meaning: "Dedicate your life to Allah alone." },
+      { verse: "And the Hereafter is better for you than the first life (93:4)", meaning: "The eternal reward surpasses this world." },
+      { verse: "Indeed, Allah is with the patient (2:153)", meaning: "Patience brings Allah’s companionship." },
+      { verse: "And We send down of the Quran that which is healing and mercy (17:82)", meaning: "The Quran heals the heart and soul." },
+      { verse: "Whoever does righteousness, it is for his own soul (41:46)", meaning: "Good deeds benefit you first." },
+      { verse: "And seek help through patience and prayer (2:45)", meaning: "Strength lies in sabr and salah." },
+      { verse: "Indeed, those who have believed and done righteous deeds - the Most Merciful will appoint for them affection (19:96)", meaning: "Faith and good deeds earn Allah’s love." },
+      { verse: "My mercy encompasses all things (7:156)", meaning: "Allah’s rahmah is limitless." },
+      { verse: "And do good; indeed, Allah loves the doers of good (2:195)", meaning: "Kindness is beloved to Allah." },
+      { verse: "Indeed, the decree of Allah is always destined (15:21)", meaning: "Everything happens by Allah’s perfect plan." },
+      { verse: "And whoever turns away from My remembrance - indeed, he will have a depressed life (20:124)", meaning: "Nearness to Allah brings happiness." },
+      { verse: "Indeed, Allah is the best of providers (62:11)", meaning: "Trust Allah for your sustenance." },
+      { verse: "And We have not sent you except as a mercy to the worlds (21:107)", meaning: "The Prophet (PBUH) is a blessing for all." },
+      { verse: "So whoever does an atom’s weight of good will see it (99:7)", meaning: "No good deed is too small for reward." },
+      { verse: "And whoever is grateful - his gratitude is only for his own good (27:40)", meaning: "Shukr benefits the thankful." },
+      { verse: "Indeed, the righteous will be in pleasure (83:22)", meaning: "Righteousness leads to eternal joy." },
+      { verse: "And Allah is the best of planners (3:54)", meaning: "Allah’s plans always prevail." }
+    ];
+
+    // Date and time display
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('gregorian').textContent = now.toLocaleString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true
+      });
+
+      // Simple Hijri approximation
+      const hijriOffset = 1446;
+      const daysSinceEpoch = Math.floor((now - new Date('1970-01-01')) / (1000 * 60 * 60 * 24));
+      const hijriDays = Math.floor(daysSinceEpoch / 354.367) + hijriOffset;
+      const hijriDay = Math.floor(daysSinceEpoch % 354.367) + 1;
+      const hijriMonths = ['Muharram', 'Safar', 'Rabi al-Awwal', 'Rabi al-Thani', 'Jumada al-Awwal', 
+                          'Jumada al-Thani', 'Rajab', 'Shaban', 'Ramadan', 'Shawwal', 'Dhu al-Qadah', 'Dhu al-Hijjah'];
+      const hijriMonthIndex = Math.floor(hijriDay / 29.5);
+      const hijriDayInMonth = Math.floor(hijriDay % 29.5) + 1;
+      document.getElementById('hijri').textContent = `${hijriDayInMonth} ${hijriMonths[hijriMonthIndex]} ${hijriDays} AH`;
+    }
+
+    // Display daily verse
+    function updateVerse() {
+      const now = new Date();
+      const ramadanDay = (now.getDate() - 1) % 30;
+      const verse = verses[ramadanDay];
+      document.getElementById('verse').textContent = verse.verse;
+      document.getElementById('meaning').textContent = verse.meaning;
+    }
+
+    // Check submission window
+    function isSubmissionWindowOpen() {
+      const now = new Date();
+      const hours = now.getHours();
+      const isOpen = (hours >= 18 || hours < 4); // 6 PM to 4 AM
+      document.getElementById('alert').textContent = isOpen ? '' : 'Form submissions are only accepted between 6 PM and 4 AM daily.';
+      document.getElementById('alert').style.display = isOpen ? 'none' : 'block';
+      return isOpen;
+    }
+
+    // Fetch leaderboard from Apps Script proxy
+    async function refreshLeaderboard() {
+      const response = await fetch('YOUR_APPS_SCRIPT_WEB_APP_URL'); // Replace with your Apps Script URL
+      const data = await response.json();
+      const table = document.getElementById('leaderboard');
+      while (table.rows.length > 1) table.deleteRow(1); // Clear old rows
+      data.forEach((entry, index) => {
+        const row = table.insertRow();
+        row.innerHTML = `<td>${entry.twitter}</td><td>${entry.score}</td>`;
+        if (index === 0) {
+          row.style.background = 'rgba(212, 175, 55, 0.2)';
+          row.style.fontWeight = 'bold';
+        }
+      });
+    }
+
+    // Redirect to form
+    function beginPlanning() {
+      window.location.href = 'https://forms.gle/MFrhkGw7qPFYp6uv8';
+    }
+
+    // Initialize
+    updateDateTime();
+    updateVerse();
+    isSubmissionWindowOpen();
+    refreshLeaderboard();
+    setInterval(updateDateTime, 1000); // Update time every second
+  </script>
+</body>
+</html>
