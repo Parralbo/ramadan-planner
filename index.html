@@ -222,7 +222,7 @@
 
     // Fetch leaderboard from Apps Script proxy
     async function refreshLeaderboard() {
-      const response = await fetch('YOUR_APPS_SCRIPT_WEB_APP_URL'); // Replace with your Apps Script URL
+      const response = await fetch('https://script.google.com/macros/s/AKfycbzIdq50C-kbOuN1ojTE6uBYs46fy41XbsU0upPhPodXRCj6qNha_ws_CesW3V9wWTqJ/exec'); // Replace with your Apps Script URL
       const data = await response.json();
       const table = document.getElementById('leaderboard');
       while (table.rows.length > 1) table.deleteRow(1); // Clear old rows
