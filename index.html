@@ -247,7 +247,7 @@
     function updateVerse() {
       const now = new Date();
       const bangladeshTime = new Date(now.getTime() + (6 * 60 * 60 * 1000));
-      const ramadanDay = (bangladeshTime.getDate() - 1) % 30;
+      const ramadanDay = (bangladeshTime.getDate() - 2) % 30; // Adjust for 0-based index starting March 2
       const verse = verses[ramadanDay];
       document.getElementById('verse').textContent = verse.verse;
       document.getElementById('meaning').textContent = verse.meaning;
@@ -266,19 +266,26 @@
 
     // Fetch leaderboard from Apps Script proxy
     async function refreshLeaderboard() {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbzVOI0Tn1T_vhmKt3z5nVzhcHZMV0fY96F3AIQPPKcctqB2NZVyqXdD6Hz1Zdkm9TV2/exec'); // Replace with your Apps Script URL
-      const data = await response.json();
-      const table = document.getElementById('leaderboard');
-      while (table.rows.length > 1) table.deleteRow(1);
-      data.forEach((entry, index) => {
-        const row = table.insertRow();
-        row.innerHTML = `<td>${entry.twitter}</td><td>${entry.score}</td>`;
-        if (index === 0) {
-          row.style.background = 'rgba(212, 160, 23, 0.2)';
-          row.style.fontWeight = 'bold';
-          row.style.color = '#d4a017';
-        }
-      });
+      try {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbxFYxcKW3zbsgjHFp-fyHd7hmn2Qbe9KG1PIW6CtNwwRSSSWAI87dltxIuCTR5jZ50/exec'); // Replace with your Apps Script URL
+        if (!response.ok) throw new Error('Fetch failed: ' + response.status);
+        const data = await response.json();
+        console.log('Leaderboard data:', data); // Debug log
+        const table = document.getElementById('leaderboard');
+        while (table.rows.length > 1) table.deleteRow(1);
+        data.forEach((entry, index) => {
+          const row = table.insertRow();
+          row.innerHTML = `<td>${entry.twitter}</td><td>${entry.score}</td>`;
+          if (index === 0) {
+            row.style.background = 'rgba(212, 160, 23, 0.2)';
+            row.style.fontWeight = 'bold';
+            row.style.color = '#d4a017';
+          }
+        });
+      } catch (error) {
+        console.error('Leaderboard error:', error);
+        document.getElementById('leaderboard').innerHTML = '<tr><td colspan="2">Error loading leaderboard</td></tr>';
+      }
     }
 
     // Redirect to form
