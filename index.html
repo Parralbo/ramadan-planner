@@ -265,14 +265,14 @@
       return isOpen;
     }
 
-    // Fetch leaderboard from Apps Script proxy
+    // Fetch leaderboard from main Apps Script web app
     async function refreshLeaderboard() {
-      const proxyUrl = 'https://script.google.com/macros/s/AKfycbxROq3YYMr7htCBTj-FOXLh8597xFYLYQYvnhfz-AuDZPG2tifGaix9Y6CoHJcvxaWq/exec'; // Replace with your Apps Script URL
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbyPHK_l6SECdVq7o-XiUD2Zl6tAqNckSA6yzzWT1cCEB7GM47kZgu5-UumOM-quU1Vm/exec'; // Replace with your main Apps Script URL
       try {
-        const response = await fetch(proxyUrl, {
+        const response = await fetch(scriptUrl, {
           method: 'GET',
-          mode: 'cors', // Ensure CORS compatibility
-          cache: 'no-cache', // Prevent caching issues
+          mode: 'cors',
+          cache: 'no-cache',
           headers: {
             'Content-Type': 'application/json'
           }
