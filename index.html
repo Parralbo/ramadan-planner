@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Site</title>
+</head>
+<body>
+    <h1>My Website</h1>
+    <div id="result"></div>
+    <script>
+        fetch('https://script.google.com/macros/s/AKfycbwBrRcbCMg8pHp-ww5NCwZKUwRrjZBxcKf09dfjimOxeYZYh7V2zPrMt9caeoISxFkJ/exec')
+            .then(response => response.text())
+            .then(data => document.getElementById('result').innerHTML = data)
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>
