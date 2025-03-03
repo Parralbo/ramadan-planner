@@ -183,6 +183,7 @@
     <h2>Salah Leaderboard</h2>
     <table class="leaderboard" id="leaderboard">
       <tr><th>Twitter Handle</th><th>Salah Score</th></tr>
+      <tr><td colspan="2">Loading...</td></tr>
     </table>
     <button class="refresh-btn" onclick="refreshLeaderboard()">Refresh Rankings</button>
     <button class="begin-btn" onclick="beginPlanning()">Begin Planning</button>
@@ -266,25 +267,45 @@
 
     // Fetch leaderboard from Apps Script proxy
     async function refreshLeaderboard() {
+      const proxyUrl = 'https://script.google.com/macros/s/AKfycbxROq3YYMr7htCBTj-FOXLh8597xFYLYQYvnhfz-AuDZPG2tifGaix9Y6CoHJcvxaWq/exec'; // Replace with your Apps Script URL
       try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxROq3YYMr7htCBTj-FOXLh8597xFYLYQYvnhfz-AuDZPG2tifGaix9Y6CoHJcvxaWq/exec'); // Replace with your Apps Script URL
-        if (!response.ok) throw new Error('Fetch failed: ' + response.status);
-        const data = await response.json();
-        console.log('Leaderboard data:', data); // Debug log
-        const table = document.getElementById('leaderboard');
-        while (table.rows.length > 1) table.deleteRow(1);
-        data.forEach((entry, index) => {
-          const row = table.insertRow();
-          row.innerHTML = `<td>${entry.twitter}</td><td>${entry.score}</td>`;
-          if (index === 0) {
-            row.style.background = 'rgba(212, 160, 23, 0.2)';
-            row.style.fontWeight = 'bold';
-            row.style.color = '#d4a017';
+        const response = await fetch(proxyUrl, {
+          method: 'GET',
+          mode: 'cors', // Ensure CORS compatibility
+          cache: 'no-cache', // Prevent caching issues
+          headers: {
+            'Content-Type': 'application/json'
           }
         });
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log('Leaderboard data received:', data); // Debug log
+        
+        const table = document.getElementById('leaderboard');
+        while (table.rows.length > 1) table.deleteRow(1); // Clear existing rows
+        
+        if (!Array.isArray(data) || data.length === 0) {
+          const row = table.insertRow();
+          row.innerHTML = '<td colspan="2">No submissions yet</td>';
+        } else {
+          data.forEach((entry, index) => {
+            const row = table.insertRow();
+            row.innerHTML = `<td>${entry.twitter || 'Unknown'}</td><td>${entry.score || 0}</td>`;
+            if (index === 0) {
+              row.style.background = 'rgba(212, 160, 23, 0.2)';
+              row.style.fontWeight = 'bold';
+              row.style.color = '#d4a017';
+            }
+          });
+        }
       } catch (error) {
-        console.error('Leaderboard error:', error);
-        document.getElementById('leaderboard').innerHTML = '<tr><td colspan="2">Error loading leaderboard</td></tr>';
+        console.error('Error fetching leaderboard:', error);
+        const table = document.getElementById('leaderboard');
+        while (table.rows.length > 1) table.deleteRow(1);
+        const row = table.insertRow();
+        row.innerHTML = `<td colspan="2">Error loading leaderboard: ${error.message}. Check console for details.</td>`;
       }
     }
 
