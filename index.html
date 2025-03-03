@@ -267,7 +267,7 @@
     // Fetch leaderboard from Apps Script proxy
     async function refreshLeaderboard() {
       try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxFYxcKW3zbsgjHFp-fyHd7hmn2Qbe9KG1PIW6CtNwwRSSSWAI87dltxIuCTR5jZ50/exec'); // Replace with your Apps Script URL
+        const response = await fetch('https://script.google.com/macros/s/AKfycbzBbDASQMgXZhuOoMY118QTON4_op4nMShqtlFnDonqND2RU0Dicpm5s2nv0oBOPWjf/exec'); // Replace with your Apps Script URL
         if (!response.ok) throw new Error('Fetch failed: ' + response.status);
         const data = await response.json();
         console.log('Leaderboard data:', data); // Debug log
