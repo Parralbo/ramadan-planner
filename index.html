@@ -1,3 +1,6 @@
+To address the issue in your `index.html` file, here is the complete HTML code with the modified `refreshLeaderboard` function:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -192,7 +195,6 @@
   <div id="alert" class="alert" style="display: none;"></div>
 
   <script>
-    // Quran verses (static array)
     const verses = [
       { verse: "Indeed, with hardship comes ease (94:6)", meaning: "Allah promises relief after every difficulty." },
       { verse: "So remember Me; I will remember you (2:152)", meaning: "Remembrance of Allah brings His mercy and closeness." },
@@ -226,7 +228,6 @@
       { verse: "And Allah is the best of planners (3:54)", meaning: "Allah’s plans always prevail." }
     ];
 
-    // Date and time display with corrected Hijri (Bangladesh time)
     function updateDateTime() {
       const now = new Date();
       const bangladeshTime = new Date(now.getTime() + (6 * 60 * 60 * 1000));
@@ -236,7 +237,6 @@
         timeZone: 'UTC'
       });
 
-      // Hijri date aligned to Ramadan start (March 1, 2025, 18:00 UTC = March 2, 00:00 BDT = 1 Ramadan 1446 AH)
       const ramadanStart = new Date('2025-03-01T18:00:00Z');
       const ramadanStartBangladesh = new Date(ramadanStart.getTime() + (6 * 60 * 60 * 1000));
       const timeDiff = bangladeshTime - ramadanStartBangladesh;
@@ -244,17 +244,15 @@
       document.getElementById('hijri').textContent = `${daysSinceRamadanStart} Ramadan 1446 AH`;
     }
 
-    // Display daily verse
     function updateVerse() {
       const now = new Date();
       const bangladeshTime = new Date(now.getTime() + (6 * 60 * 60 * 1000));
-      const ramadanDay = (bangladeshTime.getDate() - 2) % 30; // Adjust for 0-based index starting March 2
+      const ramadanDay = (bangladeshTime.getDate() - 2) % 30;
       const verse = verses[ramadanDay];
       document.getElementById('verse').textContent = verse.verse;
       document.getElementById('meaning').textContent = verse.meaning;
     }
 
-    // Check submission window (Bangladesh time)
     function isSubmissionWindowOpen() {
       const now = new Date();
       const bangladeshTime = new Date(now.getTime() + (6 * 60 * 60 * 1000));
@@ -265,7 +263,6 @@
       return isOpen;
     }
 
-    // Fetch leaderboard using a CORS proxy
     async function refreshLeaderboard() {
       const scriptUrl = 'https://script.google.com/macros/s/AKfycbwBrRcbCMg8pHp-ww5NCwZKUwRrjZBxcKf09dfjimOxeYZYh7V2zPrMt9caeoISxFkJ/exec'; // Replace with your main Apps Script URL
       const corsProxy = 'https://cors-anywhere.herokuapp.com/'; // Free CORS proxy
@@ -285,13 +282,20 @@
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
         }
+
+        const text = await response.text(); // Get response as text
+        let data;
+        try {
+          data = JSON.parse(text); // Attempt to parse JSON
+        } catch (jsonError) {
+          throw new Error('Invalid JSON response'); // Handle JSON parsing error
+        }
         
-        const data = await response.json();
         console.log('Leaderboard data received:', data); // Debug log
-        
+
         const table = document.getElementById('leaderboard');
         while (table.rows.length > 1) table.deleteRow(1); // Clear existing rows
-        
+
         if (!Array.isArray(data) || data.length === 0) {
           const row = table.insertRow();
           row.innerHTML = '<td colspan="2">No submissions yet</td>';
@@ -312,7 +316,7 @@
         while (table.rows.length > 1) table.deleteRow(1);
         const row = table.insertRow();
         row.innerHTML = `<td colspan="2">Error loading leaderboard: ${error.message}. Using fallback data.</td>`;
-        
+
         // Fallback: Display sample data if fetch fails
         const fallbackData = [{ twitter: '@example', score: 3 }];
         fallbackData.forEach((entry, index) => {
@@ -327,12 +331,10 @@
       }
     }
 
-    // Redirect to form
     function beginPlanning() {
       window.location.href = 'https://forms.gle/MFrhkGw7qPFYp6uv8';
     }
 
-    // Initialize
     updateDateTime();
     updateVerse();
     isSubmissionWindowOpen();
@@ -341,3 +343,6 @@
   </script>
 </body>
 </html>
+```
+
+This code includes the modifications to handle JSON parsing errors in the `refreshLeaderboard` function.
